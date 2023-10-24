@@ -1,9 +1,10 @@
 import React from "react";
+import Canvas from "./components/canvas.js";
 
 const App = () => {
   return (
     <>
-      <div>A simple hello world to see if everything compiles</div>
+     <Canvas/>
     </>
   );
 };

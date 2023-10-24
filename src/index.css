@@ -1,0 +1,26 @@
+:root{
+  font-size: 16px;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  background-color: rgb(209, 221, 240);
+  margin: 0;
+  padding: 0;
+}
+
+.drawing_area{
+  margin: 1rem;
+  width: 1024px;
+  height: 512px;
+  background-color: black;
+  position: relative;
+}
+
+.location_point{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: white;
+}
