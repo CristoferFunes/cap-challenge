@@ -19,8 +19,6 @@ body{
 
 .location_point{
   position: absolute;
-  width: 15px;
-  height: 15px;
   border-radius: 50%;
   background-color: white;
 }
