@@ -154,8 +154,19 @@ you can cancel it by clicking the same button.
 - if you click the "edit parameters" button you can alter the default settings for the algorithm.
 
 
-##Limitations
+## Limitations and Improvement areas.
 
-##Conclusion
+To iterate over the algorithm I used the useEffect hook of React, the final goal is to use a Worker to handle the computing in the background, I'm hoping to have the time to do so
+In the meantime, it shows sometimes a loop warning in the console (it's not infinite as I added a condition for stop)
 
+Also the time I had prevented me to give it a more aesthetically pleasing interface.
 
+At greater number of points (25+), sometimes it gets stuck in an "optimized" path and the mutation rules don't have enough diversity to push the population further, that is obviously 
+an area that I will be still trying to solve.
+
+## Conclusion
+
+I put my heart into this challenge, I'm certain that is not perfect but I hope it demonstrates not only that I really enjoy doing this, but that I'm capable of solving complex problems,
+also that I can see the areas in which I can improve and act on them, also I hope this submit shows that I'm also capable of learning and implementing new knowledge and ideas on the go,
+always looking for a better way of doing things, always investigating and fully commiting, I **know** that I can be a valuable asset in your company and I'm really excited to become part
+of a super capable team, a team that will push my limits further, a team that I know will bring out the best in me and push me into becoming a better self.
