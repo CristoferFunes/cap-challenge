@@ -144,7 +144,7 @@ You can see the application [HERE](http://localhost:3000/) or typing "http://loc
 
 ## Instructions
 
-- The user can add points in the black area by clicking first on the "add point" button and then choosing the location with your mouse, 
+- The user can add points in the **Gray area** by clicking first on the "add point" button and then choosing the location with your mouse, 
 you can cancel it by clicking the same button.
 - To delete a determined point, just click over it (make sure the option for adding a point is not active).
 - Also you can easily delete the last point by clicking the "delete last" button.
