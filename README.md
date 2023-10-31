@@ -161,6 +161,8 @@ In the meantime, it shows sometimes a loop warning in the console (it's not infi
 
 Also the time I had prevented me to give it a more aesthetically pleasing interface.
 
+Some functions are "case specific", and would need a little editing to work in a different context.
+
 At greater number of points (25+), sometimes it gets stuck in an "optimized" path and the mutation rules don't have enough diversity to push the population further, that is obviously 
 an area that I will be still trying to solve.
 
