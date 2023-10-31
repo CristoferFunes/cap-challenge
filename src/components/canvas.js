@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const Canvas = () => {
+
+  const positionRef = useRef();
 
   const [state, setState] = useState({
     new_point: false,
@@ -139,8 +141,10 @@ const Canvas = () => {
   }
 
   const handleMouseMove = (event) => {
-    let x = event.clientX -16;
-    let y = event.clientY -16;
+    const canvas_x = positionRef.current.offsetLeft;
+    const canvas_y = positionRef.current.offsetTop;
+    let x = event.clientX -canvas_x;
+    let y = event.clientY -canvas_y;
     setState(prev => ({...prev, mouse_x: x < 0 ? 0 : x > 1024 ? 1024 : x, mouse_y: y < 0 ? 0 : y > 512 ? 512 : y}));
   };
 
@@ -178,6 +182,7 @@ const Canvas = () => {
       <div className="drawing_area"
       onMouseMove={handleMouseMove}
       onClick={handleOnClick}
+      ref={positionRef}
       >
         <svg width="1024" height="512">
           {state.best_order?.length === state.points.length && state.best_order?.map((point, index) => {
@@ -189,7 +194,7 @@ const Canvas = () => {
                   y1={point.y}
                   x2={state.best_order[index + 1].x}
                   y2={state.best_order[index + 1].y}
-                  stroke="blue"
+                  stroke="white"
                   strokeWidth="2"
                 />
               );
@@ -221,18 +226,17 @@ const Canvas = () => {
         <button className="button" onClick={handleRamdomize} disabled={state.run}>Randomize existing</button>
         <button className="button" onClick={handleDeleteLast} disabled={state.run}>Delete last</button>
         <button className="button" onClick={handleResetAll} disabled={state.run}>Reset all</button>
+      </div>
+      <div className="buttons_container">
         <button className="primary_button" onClick={handleStart} disabled={state.run}>{state.run ? "Running..." : "Start test"}</button>
+      </div>
+      <div className="buttons_container">
         <div>{"Best: "+state.best_distance}</div>
         <div>{"Order: "+state.best_order?.map(point => point.order).toString()}</div>
       </div>
-
     </div>
     <button onClick={hanldeResetCounter}>Reset counter</button>
-    {state.route_population?.map(element => {
-      return(
-        <div>{element.route.map(point => point.order).toString()}</div>
-      );
-    })}    
+ 
     </>
   );
 }
