@@ -6,24 +6,11 @@ const Canvas = () => {
   let route_population, best_order, points, best_distance;*/
 
   const [state, setState] = useState({
-    points_size: 14,
-    points_amount: 5,
-    points: [
-      {x: 10, y: 10, order: 0},
-      {x: 20, y: 40, order: 1},
-      {x: 30, y: 80, order: 2},
-      {x: 30, y: 160, order: 3},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 160, order: 3},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4},
-      {x: 30, y: 320, order: 4}
-    ],
+    new_point: false,
+    mouse_x: '',
+    mouse_y: '',
+    points_size: 16,
+    points: [],
     route_population : null,
     population_size: 100,
     mutation_rate: 0.05,
@@ -143,68 +130,105 @@ const Canvas = () => {
   },[state.route_population, state.run]);
 
   const handleStart = () => {
+    if(state.points.length <= 0) return;
     const population = []
     for(let i = 0; i<state.population_size; i++){
       population.push({fitness: 0, route: [...state.points].sort(()=>Math.random()-0.5)});
     }
-    setState(prev => ({...prev, route_population: population, run: true}));
+    setState(prev => ({...prev, route_population: population, run: true, count: 0}));
   }
 
-  const handleNextStep = () => {
-
-      setState(prev => ({...prev, run: true}));
-
-  }
   const hanldeResetCounter = () => {
-
     setState(prev => ({...prev, run: true, count: 0}));
+  }
 
-}
+  const handleMouseMove = (event) => {
+    let x = event.clientX -16;
+    let y = event.clientY -16;
+    setState(prev => ({...prev, mouse_x: x < 0 ? 0 : x > 1024 ? 1024 : x, mouse_y: y < 0 ? 0 : y > 512 ? 512 : y}));
+  };
+
+  const handleAdd = () => {
+    setState(prev => ({...prev, new_point: !state.new_point}));
+  };
+
+  const handleOnClick = () => {
+    if(!state.new_point) return;
+    const newPoint = state.points;
+    newPoint.push({x: state.mouse_x, y: state.mouse_y, order: state.points.length});
+    setState(prev => ({...prev, new_point: false, points: newPoint, best_order: undefined, best_distance: Infinity}));
+  }
+
+  const handleDeleteLast = () => {
+    const newPoint = state.points;
+    newPoint.pop();
+    setState(prev => ({...prev, new_point: false, points: newPoint, best_order: undefined, best_distance: Infinity}));
+  }
+
+  const handleResetAll = () => {
+    setState(prev => ({...prev, new_point: false, points: [], best_order: undefined, best_distance: Infinity}));
+  }
 
   return(
     <>
-    <div className="drawing_area">
-    <svg width="1024" height="512">
-      {state.best_order?.map((point, index) => {
-        if (index < state.points.length - 1) {
-          return (
-            <line
-              key={index}
-              x1={point.x}
-              y1={point.y}
-              x2={state.best_order[index + 1].x}
-              y2={state.best_order[index + 1].y}
-              stroke="blue"
-              strokeWidth="2"
-            />
-          );
-        }
-        return null;
-      })}
-    </svg>
-      {state.points.map((point, i) => {
-        return(
-          <span className="location_point"
-          style={{top: (point.y-(state.points_size/2))+"px", 
-          left: (point.x-(state.points_size/2))+"px",
-          width: state.points_size+"px",
-          height: state.points_size+"px"
-          }}>{i}</span>
-        );
-      })}
+    <div className="main_container">
+      <div className="drawing_area"
+      onMouseMove={handleMouseMove}
+      onClick={handleOnClick}
+      >
+        <svg width="1024" height="512">
+          {state.best_order?.length === state.points.length && state.best_order?.map((point, index) => {
+            if (index < state.points.length - 1) {
+              return (
+                <line
+                  key={index+"line"}
+                  x1={point.x}
+                  y1={point.y}
+                  x2={state.best_order[index + 1].x}
+                  y2={state.best_order[index + 1].y}
+                  stroke="blue"
+                  strokeWidth="2"
+                />
+              );
+            }
+            return null;
+          })}
+        </svg>
+        {state.new_point && <span className="location_point"
+        style={{top: Math.floor(state.mouse_y-(state.points_size/2))+"px", 
+        left: Math.floor(state.mouse_x-(state.points_size/2))+"px",
+        width: state.points_size+"px",
+        height: state.points_size+"px"
+        }}>{"N"}</span>}
+          {state.points.map((point, i) => {
+            return(
+              <span className="location_point"
+              key={i+"point"}
+              style={{top: (point.y-(state.points_size/2))+"px", 
+              left: (point.x-(state.points_size/2))+"px",
+              width: state.points_size+"px",
+              height: state.points_size+"px"
+              }}>{i}</span>
+            );
+          })}
+      </div>
+      <div className="controls_container">
+        <button className={"button" + (state.new_point ? " active_button" : "")} onClick={handleAdd} disabled={state.run}>{state.new_point ? "Cancel" : "Add point"}</button>
+        <button className="button" onClick={handleRamdomize} disabled={state.run}>Randomize existing</button>
+        <button className="button" onClick={handleDeleteLast} disabled={state.run}>Delete last</button>
+        <button className="button" onClick={handleResetAll} disabled={state.run}>Reset all</button>
+        <button className="primary_button" onClick={handleStart} disabled={state.run}>{state.run ? "Running..." : "Start test"}</button>
+        <div>{"Best: "+state.best_distance}</div>
+        <div>{"Order: "+state.best_order?.map(point => point.order).toString()}</div>
+      </div>
+
     </div>
-    <div>{"Best: "+state.best_distance}</div>
-    <div>{"Order: "+state.best_order?.map(point => point.order).toString()}</div>
-    <button onClick={handleRamdomize}>click me</button>
-    <button onClick={()=>console.log(state)}>state</button>
-    <button onClick={handleStart}>Start</button>
-    <button onClick={handleNextStep}>Next step</button>
     <button onClick={hanldeResetCounter}>Reset counter</button>
     {state.route_population?.map(element => {
       return(
         <div>{element.route.map(point => point.order).toString()}</div>
       );
-    })}
+    })}    
     </>
   );
 }
