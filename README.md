@@ -65,7 +65,7 @@ Wednesday 1st of November: Make sure everything is in order, prepare the package
 
 ## Algorithm
 
-## Data structure
+### Data structure
 -I have one canvas (1024px, 512px)
 -An array of objects (in this case the points) with this parameters: an x position within the range of 0-1024, an y position within the range of 0-512, an index number for determining the order
 
