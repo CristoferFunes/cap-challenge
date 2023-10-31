@@ -73,10 +73,10 @@ Wednesday 1st of November: Make sure everything is in order, prepare the package
 
 I believe this is a really interesting problem because it has the potential to have the worst time complexity _O(N!)_.
 Which is the case for the first approach that I implemented which followed this steps to iterate through all the posibilities in lexicographic order (ABC, ACB, BAC, BCA, CAB, CBA):
-Find the largest i so that Array[i].order_index < Array[i+1].order_index;
-Find the largest j so that Array[i].order_index < Array[j].order_index;
-Swap Array[i] and Array[j];
-Reverse Array[i+1 ... n];
+- Find the largest i so that Array[i].order_index < Array[i+1].order_index;
+- Find the largest j so that Array[i].order_index < Array[j].order_index;
+- Swap Array[i] and Array[j];
+- Reverse Array[i+1 ... n];
 
 I wont get into much detail for this algorithm for is not the main objective of the exercise.
 
