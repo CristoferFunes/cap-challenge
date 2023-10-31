@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 
 const Canvas = () => {
 
-  /*let intervalID;
-  let route_population, best_order, points, best_distance;*/
-
   const [state, setState] = useState({
     new_point: false,
     mouse_x: '',
@@ -19,19 +16,17 @@ const Canvas = () => {
     count: 0
   });
 
+  //Function that helped me get a random number between a range
   const getRandomNumber = (min, max) => {
     return Math.random() * (max - min) + min;
   }
 
+  //Function that randomizes the position of all the points
   const handleRamdomize = () => {
     setState(prev => ({...prev, best_order: undefined, best_distance: Infinity, points: prev.points.map((element, index) => {return {x: getRandomNumber(0, 1024), y: getRandomNumber(0, 512), order: index}})}));
   }
 
-  /*const handleRamdomize = () => {
-    points = state.points.map((element, index) => {return {x: getRandomNumber(0, 1024), y: getRandomNumber(0, 512), order: index}})
-    setState(prev => ({...prev, best_order: undefined, best_distance: Infinity, points: points}));
-  }*/
-
+  //Function that meassures the distance between all the points in a given array and returns it inverted and exponeciated
   const getFitness = (array) => {
     let distance = 0;
     array.forEach((point, index, points) => {
@@ -42,18 +37,19 @@ const Canvas = () => {
       }
     });
     if(distance<state.best_distance){
-      //console.log(array.map(point => point.order).toString());
       setState(prev => ({...prev, best_distance: distance, best_order: array, count: 0}));
     }
     return Math.pow(1/(distance+1), 3);
   }
 
+  //Function for normalizing the fitness value of a given population
   const normalizeFitness = (population) => {
     let sum_of_population = 0
     population.forEach(route => sum_of_population+=route.fitness);
     return population.map(route => {return{...route, fitness: route.fitness/sum_of_population}})
   }
 
+  //Takes a population and returns a more fit one
   const getNextGen = (population) => {
     const selectAccordingToProbability = (array) => {
       let i = 0;
@@ -66,6 +62,7 @@ const Canvas = () => {
     }
     const nextGen = [];
     population.forEach(()=>{
+      //Crossover
       let parent1 = selectAccordingToProbability(population);
       let parent2 = selectAccordingToProbability(population);
       let chance = parent1.fitness / (parent1.fitness+parent2.fitness);
@@ -87,6 +84,7 @@ const Canvas = () => {
         forgoten.push(index);
       }
       forgoten.forEach(indexNum => child.route[indexNum] = parent1.route.filter(element => !child.route.includes(element))[0]);
+      //Mutation
       let mutation = state.mutation_rate;
       let thisMutation = Math.random();
       mutation -= thisMutation;
@@ -116,10 +114,8 @@ const Canvas = () => {
     return nextGen;
   }
 
+  //React hook that itereates over generations
   useEffect(()=>{
-    
-
-    //console.log(state.route_population);
     if(!state.route_population || !state.run) return;
     let route_population = state.route_population.map(route => {
       return {...route, fitness: getFitness(route.route)}
@@ -165,6 +161,13 @@ const Canvas = () => {
     setState(prev => ({...prev, new_point: false, points: newPoint, best_order: undefined, best_distance: Infinity}));
   }
 
+  const clickOnPoint = (index) => {
+    if(state.new_point || state.run) return;
+    const newPoint = state.points;
+    newPoint.splice(index, 1);
+    setState(prev => ({...prev, new_point: false, points: newPoint, best_order: undefined, best_distance: Infinity}));
+  }
+
   const handleResetAll = () => {
     setState(prev => ({...prev, new_point: false, points: [], best_order: undefined, best_distance: Infinity}));
   }
@@ -204,6 +207,7 @@ const Canvas = () => {
             return(
               <span className="location_point"
               key={i+"point"}
+              onClick={()=>clickOnPoint(i)}
               style={{top: (point.y-(state.points_size/2))+"px", 
               left: (point.x-(state.points_size/2))+"px",
               width: state.points_size+"px",
