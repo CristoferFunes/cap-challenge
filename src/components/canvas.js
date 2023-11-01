@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Popup from "./popup";
 
 const Canvas = () => {
 
@@ -15,7 +16,8 @@ const Canvas = () => {
     mutation_rate: 0.05,
     best_distance: Infinity,
     given_cicles: 1000,
-    count: 0
+    count: 0,
+    edit: false
   });
 
   //Function that helped me get a random number between a range
@@ -136,10 +138,6 @@ const Canvas = () => {
     setState(prev => ({...prev, route_population: population, run: true, count: 0}));
   }
 
-  const hanldeResetCounter = () => {
-    setState(prev => ({...prev, run: true, count: 0}));
-  }
-
   const handleMouseMove = (event) => {
     const canvas_x = positionRef.current.offsetLeft;
     const canvas_y = positionRef.current.offsetTop;
@@ -176,8 +174,18 @@ const Canvas = () => {
     setState(prev => ({...prev, new_point: false, points: [], best_order: undefined, best_distance: Infinity}));
   }
 
+  const handlePopup = () => {
+    setState(prev => ({...prev, edit: !state.edit}));
+  }
+
+  const handleOnChange = (event) => {
+    const { name, value } = event.target;
+    setState((prev) => ({...prev, [name]: Number(value)}))
+  }
+
   return(
     <>
+    {state.edit && <Popup handleClose={handlePopup} size={state.population_size} cicles={state.given_cicles} rate={state.mutation_rate} handleOnChange={handleOnChange}/>}
     <div className="main_container">
       <div className="drawing_area"
       onMouseMove={handleMouseMove}
@@ -226,6 +234,7 @@ const Canvas = () => {
         <button className="button" onClick={handleRamdomize} disabled={state.run}>Randomize existing</button>
         <button className="button" onClick={handleDeleteLast} disabled={state.run}>Delete last</button>
         <button className="button" onClick={handleResetAll} disabled={state.run}>Reset all</button>
+        <button className="button" onClick={handlePopup} disabled={state.run}>Edit parameters</button>
       </div>
       <div className="buttons_container">
         <button className="primary_button" onClick={handleStart} disabled={state.run}>{state.run ? "Running..." : "Start test"}</button>
@@ -235,8 +244,6 @@ const Canvas = () => {
         <div>{"Order: "+state.best_order?.map(point => point.order).toString()}</div>
       </div>
     </div>
-    <button onClick={hanldeResetCounter}>Reset counter</button>
- 
     </>
   );
 }
